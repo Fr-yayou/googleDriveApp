@@ -1,0 +1,29 @@
+{
+  "name": "spread-sheet-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "server": "nodemon index.js"
+  },
+  "author": "Yanis Bekhtaoui",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "google-spreadsheet": "^3.0.11",
+    "googleapis": "^39.2.0",
+    "path": "^0.12.7",
+    "query-string": "^6.13.1",
+    "request": "^2.88.2",
+    "url-parse": "^1.4.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
