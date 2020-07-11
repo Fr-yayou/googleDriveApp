@@ -86,9 +86,18 @@ app.get('/login',(req,res)=>{
             picture = response.data.picture
             res.render("sucess",{name:name,picture:picture})
         })
-        oauth2.drive.list(function(err,response){
-            if(err) throw err
-            console.log(response.data)
+        const drive = google.drive({
+            version:'v3',
+            auth:OAuth2Client
+        })
+        drive.files.list({
+            
+        },(err,response)=>{
+            if(err){
+                console.log(err)
+            }else{
+                console.log(response)
+            }
         })
     }
 })
