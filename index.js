@@ -7,20 +7,75 @@ const bodyParser = require('body-parser')
 const queryParse = require('query-string')
 const urlParse = require('url-parse')
 const axios = require ('axios')
+const OAuth2data = require('./credientials.json')
 
+//Extract infos from credientials.json//
+const CLIENT_ID = OAuth2data.web.client_id
+const CLIENT_SECRET = OAuth2data.web.client_secret
+const REDIRECT_URI= OAuth2data.web.redirect_uris[0]
 
-//SERVER//
+//Create client object//
+// const OAuth2Client = new google.auth.OAuth2(
+//     CLIENT_ID,
+//     CLIENT_SECRET,
+//     REDIRECT_URI
+// )
+// var authed = false
+
+// const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfos.profile'
+
+// //SERVER//
 const app = express()
 app.use(bodyParser.json())
 app.use(cors())
 
+// //Route//
+// app.get('/',(req,res) =>{
+//     if(!authed){
+//         var url = OAuth2Client.generateAuthUrl({
+//             access_type:'offline',
+//             scope:SCOPES
+//         })
+//         res.sendFile(path.join(__dirname,'index.html'))
+//     }else{
+//     }
+// })
+// app.get('/login',(req,res) =>{
+//     const code = req.query.code
+//     if(code){
+//         OAuth2Client.getToken(code,function(err,tokens) {
+//             if(err){
+//                 console.log('not authentificated')
+//                 console.log(err)
+//             }else{
+//                 console.log('Sucess authentification')
+//                 OAuth2Client.setCredentials(tokens)
+//                 authed = true
+//                 console.log(OAuth2Client)
+//                 res.sendFile(path.join(__dirname,'sucess.html'))
+
+//             }
+//         })
+//     }
+// })
+//Listen on port 5000
+const port = process.env.PORT || 5000
+
+
+// // //Open app on port 5000//
+
+app.listen(port,() => console.log(`Up and running on port ${port}`))
+
+
+
+
+
+
+
 const oathClient = new google.auth.OAuth2(
-    //client Id//
-    '171442554582-vr1ftf5n83d28lop7uvpnhnlkqul9hup.apps.googleusercontent.com',
-    //client secret//
-    'OVyHx7dkZu4NiKj34hMok96z',
-    //redirect url//
-    'http://localhost:5000/login',
+    CLIENT_ID,
+    CLIENT_SECRET,
+    REDIRECT_URI
 )
 
 //Route//
@@ -35,15 +90,9 @@ app.get('/',(req,res) =>{
         state:JSON.stringify({
             callbackUrl:req.body.callbackUrl,
             userID:req.body.userid,
-    
-
         }),
-        client_id:'171442554582-vr1ftf5n83d28lop7uvpnhnlkqul9hup.apps.googleusercontent.com',
-        redirect_uri:'http://localhost:5000/login'
     })
     request(url, (err, response,body) =>{
-        // console.log('error',err)
-        // console.log('status',response && response.statusCode )
         res.send({url})
     })
 
@@ -54,11 +103,10 @@ app.get('/login', async (req,res)=>{
     //Grab URL//
     const queryUrl = new urlParse(req.url)
     //Parse the Url
-
     const code = queryParse.parse(queryUrl.query).code
     const tokens =  await oathClient.getToken(code)
-    console.log(tokens)
-    const apiKey = 'AIzaSyBrUOuYhUaDXBF0ij3sOeh-WPl5xaeXBzM'
+    oathClient.setCredentials(tokens)
+    const apiKey = 'AIzaSyCMrbpHs1NY1nytjq0SRFPuQdaE2fuUn78'
     const url = `https://www.googleapis.com/drive/v3/files?key=${apiKey}`
     res.send('hello')
 
@@ -67,24 +115,15 @@ app.get('/login', async (req,res)=>{
             method:'GET',
             url,
             Authorization:'Bearer' + tokens.tokens.access_token,
-            'Accept':'application/json',
+            'Content-Type':'application/json',
           })
-          console.log(response)
+          console.log(response.data)
     }catch(e){
         console.log(e)
     }
 
 
 })
-
-
-//Listen on port 5000
-const port = process.env.PORT || 5000
-
-
-// // //Open app on port 5000//
-
-app.listen(port,() => console.log(`Up and running on port ${port}`))
 
 
 
