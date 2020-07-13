@@ -1,12 +1,9 @@
 const express = require('express')
 const {google} = require('googleapis');
-const path = require('path')
-const request = require('request')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const queryParse = require('query-string')
 const urlParse = require('url-parse')
-const axios = require ('axios')
 const OAuth2data = require('./credientials.json')
 const ejs = require('ejs')
 
@@ -91,64 +88,14 @@ app.get('/login',(req,res)=>{
             auth:OAuth2Client
         })
         drive.files.list({
-            
+
         },(err,response)=>{
-            if(err){
-                console.log(err)
-            }else{
-                console.log(response)
-            }
+            if(err) return console.log(err)
+            console.log(response)
         })
     }
 })
 
-
-//Route//
-// app.get('/login/doc',(req,res) => res.sendFile(path.join(__dirname,'index.html')))
-
-// app.get('/',(req,res) =>{
-//     oathClient
-//     const scopes =['https://www.googleapis.com/auth/drive.file']    
-//     const url =oathClient.generateAuthUrl({
-//         access_type:"offline",
-//         scope:scopes,
-//         state:JSON.stringify({
-//             callbackUrl:req.body.callbackUrl,
-//             userID:req.body.userid,
-//         }),
-//     })
-//     request(url, (err, response,body) =>{
-//         res.send({url})
-//     })
-
-// })
-
-
-// app.get('/login', async (req,res)=>{
-//     //Grab URL//
-//     const queryUrl = new urlParse(req.url)
-//     //Parse the Url
-//     const code = queryParse.parse(queryUrl.query).code
-//     const tokens =  await oathClient.getToken(code)
-//     oathClient.setCredentials(tokens)
-//     const apiKey = 'AIzaSyCMrbpHs1NY1nytjq0SRFPuQdaE2fuUn78'
-//     const url = `https://www.googleapis.com/drive/v3/files?key=${apiKey}`
-//     res.send('hello')
-
-//     try{
-//        const response  =await axios({
-//             method:'GET',
-//             url,
-//             Authorization:'Bearer' + tokens.tokens.access_token,
-//             'Content-Type':'application/json',
-//           })
-//           console.log(response.data)
-//     }catch(e){
-//         console.log(e)
-//     }
-
-
-// })
 
 
 
