@@ -38,7 +38,7 @@ const OAuth2Client = new google.auth.OAuth2(
 
 var authed = false
 //Request to the google api scopes//
-const SCOPES = "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file"
+const SCOPES = " https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.metadata   "
 
 
 app.get('/',(req,res) =>{
@@ -91,7 +91,12 @@ app.get('/login',(req,res)=>{
 
         },(err,response)=>{
             if(err) return console.log(err)
-            console.log(response)
+            const files = response.data.files
+            if(files.length){
+                files.map((file) =>{
+                    console.log(file.id,file.name)
+                })
+            }
         })
     }
 })
