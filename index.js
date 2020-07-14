@@ -2,8 +2,6 @@ const express = require('express')
 const {google} = require('googleapis');
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const queryParse = require('query-string')
-const urlParse = require('url-parse')
 const OAuth2data = require('./credientials.json')
 const ejs = require('ejs')
 
@@ -13,7 +11,8 @@ const CLIENT_SECRET = OAuth2data.web.client_secret
 const REDIRECT_URI= OAuth2data.web.redirect_uris[0]
 
 //store user info//
-var name,picture
+var user,userPic
+var authed = false
 
 // //SERVER//
 const app = express()
@@ -36,7 +35,6 @@ const OAuth2Client = new google.auth.OAuth2(
     REDIRECT_URI
 )
 
-var authed = false
 //Request to the google api scopes//
 const SCOPES = " https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.metadata   "
 
@@ -60,11 +58,9 @@ app.get('/login',(req,res)=>{
         OAuth2Client.getToken(code,function(err,tokens){
             if(err){
                 console.log("Error in Authenticating")
-                console.log(err)
 
             }else{
                 console.log("Successfully authenticated")
-                console.log(tokens)
                 OAuth2Client.setCredentials(tokens)
 
                 authed =true
@@ -76,30 +72,48 @@ app.get('/login',(req,res)=>{
             auth:OAuth2Client,
             version:'v2'
         })
-        //user infos//
+       // user infos
         oauth2.userinfo.get(function(err,response){
             if(err) throw err
-            name = response.data.name
-            picture = response.data.picture
-            res.render("sucess",{name:name,picture:picture})
+            user = response.data.name
+            userPic = response.data.picture
+            res.render("sucess",{user:user,userPic:userPic})
         })
+
+        //get list of the drive user
         const drive = google.drive({
             version:'v3',
             auth:OAuth2Client
         })
         drive.files.list({
+        //    q:mimeType='application/vnd.google-apps.spreadsheet'
 
         },(err,response)=>{
             if(err) return console.log(err)
-            const files = response.data.files
-            if(files.length){
-                files.map((file) =>{
-                    console.log(file.id,file.name)
-                })
-            }
+            data = response.data.files
+            console.log(data)
         })
     }
 })
+
+app.get('/login/files',(req,res)=>{
+    const code2 = req.query.code
+    res.send(code2)
+})
+
+
+
+
+
+// copy file selected we need to use  this  api https://www.googleapis.com/drive/v2/files/fileId/copy
+// we need to retrive the id to do a post request//
+
+
+//scope pour modifier spread sheet 
+
+//https://sheets.googleapis.com/v4/spreadsheets/spreadsheetId/values/Sheet1!A1:D5?valueInputOption=USER_ENTERED
+
+
 
 
 
